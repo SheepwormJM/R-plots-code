@@ -5,3 +5,46 @@ http://r-statistics.co/ggplot2-Tutorial-With-R.html#1.%20The%20Setup
 
 # To manipulate themes:
 https://ggplot2.tidyverse.org/reference/theme.html#arguments
+# You can use pre-defined themes too! 
+https://ggplot2.tidyverse.org/reference/ggtheme.html
+
+# You can also make your own theme and use it for every plot you make! 
+theme_mine <- function()
+{
+theme(
+plot.title = element_text(size=30, face="bold"),
+axis.text.x = element_text(size=16),
+axis.text.y = element_text(size=16),
+axis.title.x = element_text(size=25),
+axis.title.y = element_text(size=25)
+)
+}
+## Whoop whoop!
+ggp = ggplot(master_table, aes(x=log2fold, y=-log(p,10)))
++ geom_point(size = 5, shape = 2, alpha = 0.5)
++ labs(title=”Volcano Plot”,x=”log2fold change”, y=”-log10 p-value”)
++ theme_mine()
+
+
+
+### Make things easier with master colours, sizes etc if making lots of plots: 
+
+colour = “red”
+fill = “blue”
+size = 10
+title = “Volcano Plot”
+x_label = “expression”
+y_label = density
+
+ggp1 = ggplot(master_table, aes(x = HC1_expression))
++ geom_density(colour = colour, fill = fill, size = size)
++ labs(title=title,x=x_label, y=y_label)
+ggp2 = ggplot(master_table, aes(x = HC2_expression))
++ geom_density(colour = colour, fill = fill, size = size)
++ labs(title=title,x=x_label, y=y_label)
+ggp3 = ggplot(master_table, aes(x = RA1_expression))
++ geom_density(colour = colour, fill = fill, size = size)
++ labs(title=title,x=x_label, y=y_label)
+ggp4 = ggplot(master_table, aes(x = RA2_expression))
++ geom_density(colour = colour, fill = fill, size = size)
++ labs(title=title,x=x_label, y=y_label)
