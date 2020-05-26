@@ -2,3 +2,6 @@ https://stackoverflow.com/questions/3253641/change-the-order-of-a-discrete-x-sca
 
 # ggplot2 tutorial type info
 http://r-statistics.co/ggplot2-Tutorial-With-R.html#1.%20The%20Setup
+
+# To manipulate themes:
+https://ggplot2.tidyverse.org/reference/theme.html#arguments
