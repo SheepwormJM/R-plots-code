@@ -1,0 +1,107 @@
+# Here is basic code for plotting plots relevant to RNA-Seq
+library(ggplot2)
+
+# Note that when loading the following data table, the row names are set to the gene names in the first column!
+EM = read.table(file=”path/to/expression/matrix.csv”, header = TRUE, row.names = 1, sep = “\t”)
+
+# To create a density plot of expression values - the basic check of RNA-Seq data by each sample
+ggp_hc1 = ggplot(EM, aes(x=hc1)) + geom_density(colour="red", fill="blue", size = 10)
+# Note, colour is the outline and size is related to the outline thickness.
+
+# To create volcano plots, scatter plots use:
+geom_point(size = 5, shape = 2, alpha = 0.5)+
+labs(title="Volcano Plot",x="log2fold change", y="-log10 p-value")+
+theme(
+plot.title = element_text(size=30, face="bold"),
+axis.text.x = element_text(size=16),
+axis.text.y = element_text(size=16),
+axis.title.x = element_text(size=25),
+axis.title.y = element_text(size=25)
+)
+
+# To save the plot to disc:
+png(“path/to/save/plot/to.png”, height=500, width=500, pointsize=5)
+print(ggp_hc1)
+dev.off()
+
+# When making the first ggplot(data_table, aes(x,y))
+# can make the x and y be from different tables!
+master_table = read.table(file=”path/to/master_table.csv”, header = TRUE, row.names = 1, sep = “\t”)
+GO_table = read.table(file=”path/to/GO_table.csv”, header = TRUE, row.names = 1, sep = “\t”)
+ggp = ggplot(master_table, aes(x=mean_expression, y=GO_table$GO_enrichment))
+
+# Note, can also set the group and colours in the ggplot(data_table, aes()) bit:
+colours = c("black","red")
+ggp = ggplot(master_table, aes(x=log2fold, y=-log(p,10), colour=sig, group=sig))
++ geom_point()
++ theme_classic()
++ scale_color_manual(values=colours))
++ geom_text(aes(label=symbols))
+# Note that the sig will be whether your gene is significant or not (a column in your data table - make with a conditional statement)
+# And the colours will be ordered by the levels within the table.
+# Either you will need to manually assign the correct colour (see that the colours = c("black", "red" is in the right order for your 
+# levels), or make sure that your data is in the right set of levels.
+
+# To label only the significant genes then make a subset of these:
+sig_genes = subset(master_table, sig="True")
+# And for the geom_text supply this. Remember that the rows are called the gene ID. ggplot will identify the points by ID.
+geom_text(data=sig_genes, aes(label=symbols))
+
+
+
+
+## To make a box-plot of expression values for a particular gene:
+
+### IMPORTANT - ggplot2 works by COLUMN not by row - points are rows, axes are columns. 
+# So, subsetting and transposing data and melting data are very useful!
+
+
+#### To plot a box-plot for a single gene, TNFa:
+# load only expression data
+expression = read.table(file="expression_matrix.csv", header=TRUE, row.names = 1)
+samples = read.table(file="sample_sheet.csv", header=TRUE,row.names = 1)
+# select the TNF gene
+tnf_expression = expression["TNF",]
+# transpose the data - remember ggplots works by column not row
+tnf_expression_transposed = data.frame(t(tnf_expression))
+# makes the plot
+ggp = ggplot(tnf_expression_transposed, aes(x=samples$group, y=TNF, fill=samples$group))
++ geom_boxplot()
++ geom_jitter(size=2)
++ theme_classic()
++ labs(x="group",y="expression")
+
+
+#### To plot a box-plot for a multiple genes:
+# loads the melt function
+library(reshape2)
+# load the expression data
+expression = read.table(file="expression_matrix.csv", header=TRUE, row.names = 1)
+samples = read.table(file="sample_sheet.csv", header=TRUE,row.names = 1)
+# select the genes
+multi_expression = expression[c("TNF","CCL4","CCL4L2","CCL3","IL1B"),]
+# transpose the data - remember ggplots works by column not row
+multi_expression_transposed = data.frame(t(multi_expression))
+
+# Don't forget that to be able to see it properly need to scale the expression data! 
+# scale the data - remember scale returns a matrix not a data frame
+# So add this, otherwise you get the dataframe and some extra bits below it!
+multi_expression_transposed_scaled = data.frame(scale(multi_expression_transposed))
+
+# appends a column for the groups (HC and RA)
+### @@@@ #### SUPER-IMPORTANT: THIS WILL ONLY PUT THE GROUP IN AS THE ORDER PROVIDED - IT DOES NOT MATCH UP THE ROWS!! ######
+# multi_expression_transposed_scaled$group <- samples$group
+# Better would be to merge the two tables! The samples has only the row gene names and the group column.
+multi_expression_transposed_scaled = merge(multi_expression_transposed_scaled, samples, by=0)
+# Much better - merges the rows correctly and sorts them alphanumerically. 
+# Note that for merge() the column name will simply match the column header in samples (I have a Group rather than group which 
+# Thomas uses to make the new column above, so the following ggplot is for his 'group').
+
+# melts the data
+multi_expression_transposed_scaled_melted = melt(multi_expression_transposed_scaled, by=group)
+# makes the plot
+ggp = ggplot(multi_expression_transposed_scaled_melted, aes(x=variable, y=value, fill=group))+
+geom_boxplot()+
+theme_classic()+ 
+labs(x="group",y="expression")
+
