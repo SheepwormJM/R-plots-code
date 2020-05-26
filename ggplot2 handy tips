@@ -48,3 +48,16 @@ ggp3 = ggplot(master_table, aes(x = RA1_expression))
 ggp4 = ggplot(master_table, aes(x = RA2_expression))
 + geom_density(colour = colour, fill = fill, size = size)
 + labs(title=title,x=x_label, y=y_label)
+
+# sets an upper and lower limit to the axis
++ xlim(0, 100))
++ ylim(50, 75))
+# adds a mean and stdev dot and line for each group
++ stat_summary()
+# position of the legend
++ labs(title="legend.position='top'") could be ‘bottom’, ‘right’, ‘left’, ‘none’
+# Adding a custom label
+library(grid)
+my_grob = grobTree(textGrob("This text is at x=0.1 and y=0.9, relative!\n Anchor point is at
+0,0", x=0.1, y=0.9, hjust=0,gp=gpar(col="firebrick", fontsize=25, fontface="bold")))
+ggp + annotation_custom(my_grob)
