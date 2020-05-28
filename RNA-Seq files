@@ -8,6 +8,28 @@ EM = read.table(file=”path/to/expression/matrix.csv”, header = TRUE, row.nam
 ggp_hc1 = ggplot(EM, aes(x=hc1)) + geom_density(colour="red", fill="blue", size = 10)
 # Note, colour is the outline and size is related to the outline thickness.
 
+# 1. Density plots - have the samples worked?
+library(reshape2)
+expression<-read.table("EM.csv", header=T)
+head(expression)
+m_ex<-melt(expression)
+head(m_ex)
+summary(m_ex)
+names(m_ex)<-c("ID", "sample", "value")
+#Merge with sample group
+nm_ex<-merge(m_ex, sample_sheet, by="sample") # note that sample_sheet is a small df of the sample and the group.
+head(nm_ex)
+# To make easier to plot... we will log10(value)
+library(ggplot2)
+x<-ggplot(nm_ex, aes(x=log10(value)))+
+  geom_density(aes(fill=group))+
+  facet_wrap(sample ~ group, nrow=3)
+x
+
+
+
+
+
 # To create volcano plots, scatter plots use:
 geom_point(size = 5, shape = 2, alpha = 0.5)+
 labs(title="Volcano Plot",x="log2fold change", y="-log10 p-value")+
@@ -18,6 +40,28 @@ axis.text.y = element_text(size=16),
 axis.title.x = element_text(size=25),
 axis.title.y = element_text(size=25)
 )
+
+#############################
+
+# 3. MA plot: log10(expression) on xaxis against log2FC on y axis
+# Get the mean expression for each log2FC:
+colours<-c("black","red") # This should be equivalent to False, True (alphabetically ordered)
+x<-ggplot(master_EM_DE, aes(x=(log10((apply(master_EM_DE[,c("gut_mean", "lymph_mean")], 1, mean)))), y=log2fold._mlvg, colour=sig._mlvg, group=sig._mlvg))+
+  geom_point(alpha=0.5)+
+  scale_colour_manual(values=colours)+
+  labs(x="log10(Mean expression)", y="log2FC")+
+  geom_text(aes(label=Associated.Gene.Name))
+x
+
+# Note, tried to label just the sig genes but could not get to work... 
+# sig<-subset(master_EM_DE, master_EM_DE$sig._mlvg==TRUE)
+# geom_text(aes(label=sig$Associated.Gene.Name))
+
+
+###########################
+
+
+
 
 # To save the plot to disc:
 png(“path/to/save/plot/to.png”, height=500, width=500, pointsize=5)
@@ -104,4 +148,35 @@ ggp = ggplot(multi_expression_transposed_scaled_melted, aes(x=variable, y=value,
 geom_boxplot()+
 theme_classic()+ 
 labs(x="group",y="expression")
+
+
+####### Alternative way to get a boxplot #######
+# 4. To make an expression boxplot of the top three DE genes (really? do they not mean 
+# the top three sig DE?)
+# First sort the data by p.adj value:
+s_master_EM_DE<-master_EM_DE[order(master_EM_DE$p.adj._mlvg),]
+head(s_master_EM_DE$p.adj._mlvg)
+#Then select the top three DE genes and just their expression data:
+names(s_master_EM_DE)
+top<-s_master_EM_DE[1:3,c(2:11)]
+top
+# melt the data:
+top_m<-melt(top)
+top_m
+names(top_m)<-c("gene", "sample", "value")
+# Merge with sample_sheet
+top_m<-merge(top_m, sample_sheet, by="sample")
+
+# Plot the data:
+x<-ggplot(top_m, aes(x=gene, y=log10(value), fill=group))+
+ geom_boxplot()+
+ #geom_point(size=1)+ 
+   theme_classic()+
+  labs(x="Gene", y="log10(Expression value)")
+x
+
+#SAVE plot
+png("gene box plot.png", height=500, width=500, pointsize=5)
+print(x)
+dev.off()
 
