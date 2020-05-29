@@ -3,22 +3,49 @@ https://stackoverflow.com/questions/3253641/change-the-order-of-a-discrete-x-sca
 # ggplot2 tutorial type info
 http://r-statistics.co/ggplot2-Tutorial-With-R.html#1.%20The%20Setup
 
+# To manipulate legends:
+# you can do some stuff using the theme() function
+# You can make the header by specifiying as follows:
+
+labs (x = "Weight (1000 lbs)", #xaxis label
+    y = "Fuel economy (mpg)", #yaxis label
+    colour = "Cylinders", #colour aes - this creates a legend title for the aes 'colour'
+    shape = "Transmission" #shape aes - this creates a legend title for the aes 'shape'
+    fill = "Cell Group" #fill aes - this creates a legend title for the aes 'fill'
+   )
+
+
 # To manipulate themes:
 https://ggplot2.tidyverse.org/reference/theme.html#arguments
 # You can use pre-defined themes too! 
 https://ggplot2.tidyverse.org/reference/ggtheme.html
 
 # You can also make your own theme and use it for every plot you make! 
-theme_mine <- function()
+# Note, for size you can specify directly, or use rel(x), where x is a number (eg. 2, 1.5, 3.75) indicating the relative 
+# text size compared to the parental size.
+theme_jenni <- function()
 {
 theme(
-plot.title = element_text(size=30, face="bold"),
-axis.text.x = element_text(size=16),
-axis.text.y = element_text(size=16),
-axis.title.x = element_text(size=25),
-axis.title.y = element_text(size=25)
+plot.title = element_text(size=20, face="bold"),
+axis.text.x = element_text(size=12),
+axis.text.y = element_text(size=12),
+axis.title.x = element_text(size=14),
+axis.title.y = element_text(size=14, angle=90), 
+#strip.background = element_rect(colour = "black", fill = "white"),
+strip.text.x = element_text(size = 14),
+panel.spacing = unit(1, "lines"),
+plot.background = element_rect(fill = "white"),
+legend.box.background = element_rect(),
+legend.box.margin = margin(6, 6, 6, 6),     #This is the margin of space around the legend before the legend border
+#legend.key = element_rect(fill="white", colour = "black"), # If not using 'fill', or 'colour' for lines...
+legend.title=element_text(size=12),
+legend.text = element_text(face="italic", size=12),
+legend.position = "bottom",      #to remove legend "none"
+legend.justification = "top",
 )
 }
+
+
 ## Whoop whoop!
 ggp = ggplot(master_table, aes(x=log2fold, y=-log(p,10)))
 + geom_point(size = 5, shape = 2, alpha = 0.5)
@@ -34,7 +61,7 @@ fill = “blue”
 size = 10
 title = “Volcano Plot”
 x_label = “expression”
-y_label = density
+y_label = "density"
 
 ggp1 = ggplot(master_table, aes(x = HC1_expression))
 + geom_density(colour = colour, fill = fill, size = size)
