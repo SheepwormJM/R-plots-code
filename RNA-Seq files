@@ -146,6 +146,49 @@ png("gene box plot.png", height=500, width=500, pointsize=5)
 print(x)
 dev.off()
 
+## To scale and be able to see all then plot faceted with scales="free"
+x<-ggplot(top_m, aes(x=gene, y=scale, fill=group))+
+ geom_boxplot()+
+  facet_wrap(~gene, scales="free")+ # Note, this makes the x and y-axis different scale for each plot.
+ #geom_point(size=1)+ 
+   theme_classic()+
+  labs(x="Gene", y="Scaled expression value")
+x
+
+
+4. Violin plot: 
+# To get package ggforce to help with plotting in groups.
+# This gets geom_sina()
+library(ggforce)
+
+# Make a vioin plot for the top three genes:
+x<-ggplot(top_m, aes(x=gene, y=scale, fill=group))+
+  # Note that by using the defaults, my violin plots are trimmed to the range of
+  # data, after the area for each is first computed. So flat ends.
+  # Note that the scale="width" defaults to 1 and lets them, in this instance
+  # be seen. I could also scale the width to the count of points, however 
+  # despite there being three of each, this doesn't seem to want to work?!
+  # A violin plot is essentially a mirrored (butterfly like) density plot.
+  geom_violin(size=1, scale="width", draw_quantiles = c(0.25,0.5,0.75))+
+  geom_jitter(aes(group=group),position=position_jitterdodge())+
+  facet_wrap(~gene, scales="free")+ # Note, this makes the x and y-axis different scale for each plot.
+  # geom_sina() will attempt to put the values within the violins
+  # For this example it is failing for some reason for Itgae gene
+  # And I get two lots of points here. 
+  geom_sina()+
+  #geom_point(size=1)+ 
+  theme_classic()+
+  labs(x="Gene", y="Scaled expression value")
+  # The stat_summary is useful, however for this geom_violin, the quantiles are nicer!
+  #stat_summary(aes(group=group), fun="mean", position=position_jitterdodge(dodge.width = 1)) 
+
+x
+
+#SAVE plot
+png("gene box plot violin scaled facet.png", height=500, width=500, pointsize=5)
+print(x)
+dev.off()
+
 
 
 
