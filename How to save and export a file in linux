@@ -1,0 +1,5 @@
+In R, when you cannot see the file, you can save it using: 
+
+pdf("name_of_file.pdf", width = 4,height = 4,useDingbats = FALSE)
+plot(x,y) #ie. whatever you plot command will be
+dev.off()
