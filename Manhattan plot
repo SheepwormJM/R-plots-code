@@ -1,0 +1,12 @@
+tiff("<file_name>.tiff", width=580, height=480)
+
+# The x-axis has all data plotted from the start to the end of the file - not an exact position (as this data has the contigs too jumbled) - just a positional index
+# The y-axis has the Fst value
+
+x<- ggplot(data=fst, mapping=aes(x=1:nrow(fst), y=X5.6)) +
+coord_cartesian(ylim=c(0,0.25)) +
+geom_point(colour="red", alpha=0.3) +
+xlab("Positional index") +
+ylab("100kb window Fst value")
+x
+dev.off()
