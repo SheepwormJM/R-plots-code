@@ -211,3 +211,35 @@ lamb<-subset(fec, fec$Age == "Lamb")
 m<-glmm(Strongyle.epg ~ Date, random = list(~ 0 + Sample.name, ~ 0 + Management_event), varcomps.names=c("Sample_Name", "Management_event"),  data = ewe, family.glmm = poisson.glmm, m = 10^3)
 
 summary(m)
+
+
+
+# 21.01.21
+# New plot for IVM vs MOX from PhD
+
+library(ggplot2)
+library(reshape2)
+setwd("C:/Users/jenni/OneDrive - University of Glasgow/Working from home Mar 2020/BSAS project WORMSS/Files January 2021")
+
+sp<-read.table("ivm_mox_epg_phd_farm_1.txt", header=T)
+sp$Date<-as.factor(sp$Date)
+sp$Sample<-paste(sp$fig, sp$Sample, sep=". ")
+sp$Date<-paste(sp$Day, sp$Date, sep=" ")
+head(sp)
+summary(sp)
+sp<-sp[,c(2,4:10)]
+new<-melt(data = sp, id.vars = c("Sample", "Date"))
+new$variable<-as.character(new$variable)
+
+#Plot epg by species proportion over time with error bars (using SEM):
+
+x<-ggplot(new, aes(x=Date, y=value, group=variable, color=variable)) + 
+geom_line(size=1) +
+geom_point(size=3)+
+#geom_errorbar(aes(ymin=value-SEM, ymax=value+SEM), width=.5, position=position_dodge(0.05))+
+#coord_cartesian(ylim=c(0,400)) + 
+labs(y="Strongyle epg", x="Sample time point", colour="Species") +
+facet_wrap(~ Sample, nrow = 1, scales='free_y')+
+scale_colour_manual(values=c("grey64", "#FF00FF", "green3", "grey20", "darkorange2", "#3366FF"))+
+theme(axis.title.x = element_text(size=14), axis.text.x = element_text(size=12), axis.title.y = element_text(size=14), axis.text.y = element_text(size=12), strip.text.x = element_text(size = 14), legend.title=element_text(size=12), legend.text = element_text(face="italic", size=12))
+x
