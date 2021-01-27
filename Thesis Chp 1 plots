@@ -243,3 +243,39 @@ facet_wrap(~ Sample, nrow = 1, scales='free_y')+
 scale_colour_manual(values=c("grey64", "#FF00FF", "green3", "grey20", "darkorange2", "#3366FF"))+
 theme(axis.title.x = element_text(size=14), axis.text.x = element_text(size=12), axis.title.y = element_text(size=14), axis.text.y = element_text(size=12), strip.text.x = element_text(size = 14), legend.title=element_text(size=12), legend.text = element_text(face="italic", size=12))
 x
+
+
+
+# New plot for those colourblind:
+
+setwd("C:/Users/jenni/Documents")
+library(ggplot2)
+library(reshape2)
+
+sp<-read.table("JMPhD Farm 2 FECRT species epg .txt", header=T)
+head(sp)
+summary(sp)
+new<-melt(data = sp, id.vars = c("Species"))
+new$variable<-as.character(new$variable)
+new
+
+#Plot epg by species proportion over time with error bars (using SEM):
+
+x<-ggplot(new, aes(x=variable, y=value, group = Species, color=Species)) + 
+geom_line(aes(linetype = Species), size=1) +
+geom_point(aes(shape=Species), size=3)+
+labs(y="Strongyle epg", x="Sample time point", colour="Species") +
+scale_colour_manual(values=c("grey64", "#FF00FF", "green3", "grey20", "darkorange2", "#3366FF"))+
+theme(axis.title.x = element_text(size=14), axis.text.x = element_text(size=12), axis.title.y = element_text(size=14), axis.text.y = element_text(size=12), strip.text.x = element_text(size = 14), legend.title=element_text(size=12), legend.text = element_text(face="italic", size=12))
+x
+
+#Without different colours:
+x<-ggplot(new, aes(x=variable, y=value, group = Species)) + 
+geom_line(aes(linetype = Species), size=1) +
+geom_point(aes(shape=Species), size=4, stroke = 2)+
+labs(y="epg", colour="Species") +
+scale_shape_manual(values=c(6, 17, 2, 3, 7))+
+scale_x_discrete(labels=c("A.Pre" = "Pre-Treatment (d0)", "B.Post" = "Post-Treatment (d14)"))+   
+theme(axis.title.x = element_blank(), axis.text.x = element_text(size=12), axis.title.y = element_text(size=14), axis.text.y = element_text(size=12), strip.text.x = element_text(size = 14), legend.title=element_text(size=12), legend.text = element_text(face="italic", size=12), legend.key.size = unit(0.75, "cm"), legend.key.width = unit(1.5,"cm"))
+x
+
