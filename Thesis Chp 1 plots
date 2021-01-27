@@ -279,3 +279,13 @@ scale_x_discrete(labels=c("A.Pre" = "Pre-Treatment (d0)", "B.Post" = "Post-Treat
 theme(axis.title.x = element_blank(), axis.text.x = element_text(size=12), axis.title.y = element_text(size=14), axis.text.y = element_text(size=12), strip.text.x = element_text(size = 14), legend.title=element_text(size=12), legend.text = element_text(face="italic", size=12), legend.key.size = unit(0.75, "cm"), legend.key.width = unit(1.5,"cm"))
 x
 
+#Without different colours - with JITTER - LOL this is pointless for this particular plot!!! :
+x<-ggplot(new, aes(x=variable, y=value, group = Species)) + 
+geom_line(aes(linetype = Species), size=1) +
+geom_point(aes(shape=Species), size=4, stroke = 2, position=position_jitter(h=0.01, w=0.01))+
+labs(y="epg", colour="Species") +
+scale_shape_manual(values=c(6, 17, 2, 3, 7))+
+scale_x_discrete(labels=c("A.Pre" = "Pre-Treatment (d0)", "B.Post" = "Post-Treatment (d14)"))+   
+theme(axis.title.x = element_blank(), axis.text.x = element_text(size=12), axis.title.y = element_text(size=14), axis.text.y = element_text(size=12), strip.text.x = element_text(size = 14), legend.title=element_text(size=12), legend.text = element_text(face="italic", size=12), legend.key.size = unit(0.75, "cm"), legend.key.width = unit(1.5,"cm"))
+x
+
