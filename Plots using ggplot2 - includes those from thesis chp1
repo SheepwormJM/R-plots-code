@@ -289,3 +289,28 @@ scale_x_discrete(labels=c("A.Pre" = "Pre-Treatment (d0)", "B.Post" = "Post-Treat
 theme(axis.title.x = element_blank(), axis.text.x = element_text(size=12), axis.title.y = element_text(size=14), axis.text.y = element_text(size=12), strip.text.x = element_text(size = 14), legend.title=element_text(size=12), legend.text = element_text(face="italic", size=12), legend.key.size = unit(0.75, "cm"), legend.key.width = unit(1.5,"cm"))
 x
 
+
+# Plot of L3L4 work:
+
+setwd("C:/Users/jenni/Documents")
+library(ggplot2)
+library(reshape2)
+
+L3<-read.table("RNAi and culture L3L4 results.txt", header=T)
+head(L3)
+summary(L3)
+tmp<-subset(L3, L3$X._L4.posL4 != "ND")
+tmp$X._L4.posL4<-as.numeric(as.character(tmp$X._L4.posL4))  ## Note have to do nested or it just assigns a number as previously a factor! 
+tmp<-subset(tmp, tmp$Binday > 0)
+tmp$Binday<-as.factor(tmp$Binday)
+summary(tmp)
+
+L3<-tmp
+x<-ggplot(data=L3, aes(x=Binday, y=X._L4.posL4))+
+labs(y="Proportion L4", x="Day since setup") +
+geom_boxplot(mapping=aes(fill=Experiment), outlier.shape=NA)+
+theme(axis.title.x = element_text(size=14), axis.text.x = element_text(size=12), axis.title.y = element_text(size=14), axis.text.y = element_text(size=12), strip.text.x = element_text(size = 14), legend.title=element_text(size=12), legend.text = element_text(face="italic", size=12), legend.key.size = unit(0.75, "cm"), legend.key.width = unit(1.5,"cm"))
+x
+
+# Note, doing a numerical x-axis for a boxplot is a total pain!!! You need to make it discrete: https://ggplot2.tidyverse.org/reference/geom_boxplot.html https://ggplot2.tidyverse.org/reference/cut_interval.html 
+
