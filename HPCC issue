@@ -8,7 +8,9 @@
 
 # In R:
 R
+
 #R version 3.5.0 (2018-04-23) -- "Joy in Playing"
+
 library(ggplot2)
 pwc<-read.table("WASHU_Nov2020_q20Q30._pwc", header=F)
 summary(pwc)
