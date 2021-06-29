@@ -1,0 +1,9 @@
+# To make a boxplot:
+
+library(reshape2)
+d<-read.table("Day3.txt", header=T)
+melt(d)
+tmp<-boxplot(d, ylim = c(0, 1), xaxt = "n") # make the boxplot an object, without x-tick labels etc 
+tick <- seq_along(tmp$names) # Get the tick label names for the x-axis
+axis(1, at = tick, labels = F) # Plot on the ticks but no labels
+text(tick, par("usr")[3] - 0.1, tmp$names, srt = 45, xpd = T) # Plot the labels slightly below the x-axis (0.1), srt is the angle
